@@ -1,9 +1,15 @@
 import React from 'react';
-import MonacoJsonEditor from "../monaco-json-editor/monaco-json-editor";
+import MonacoJsonEditor from "../monaco-json-editor";
 
 function Root() {
     return (
-        <MonacoJsonEditor />
+        <MonacoJsonEditor schema={{
+            properties: {
+                some: {
+                    enum: [1,2,3]
+                }
+            }
+        }} />
     );
 }
 
