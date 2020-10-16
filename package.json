@@ -1,6 +1,7 @@
 {
   "name": "@united-web/react-json-editor",
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "main": "dist/index.js",
   "dependencies": {
     "@monaco-editor/react": "^3.6.3",
     "@testing-library/jest-dom": "^4.2.4",
