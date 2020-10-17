@@ -9,7 +9,7 @@ function Root() {
                     enum: [1,2,3]
                 }
             }
-        }} />
+        }} onChange={console.log} onInvalid={console.log} />
     );
 }
 

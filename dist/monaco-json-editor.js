@@ -10,9 +10,9 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import React, { useEffect } from 'react';
-import MonacoEditor, { monaco } from '@monaco-editor/react';
+import { ControlledEditor, monaco } from '@monaco-editor/react';
 function MonacoJsonEditor(_a) {
-    var { width = '100%', height = 180, options, schema } = _a, otherProps = __rest(_a, ["width", "height", "options", "schema"]);
+    var { width = '100%', height = 180, options, schema, value, onChange, onInvalid } = _a, otherProps = __rest(_a, ["width", "height", "options", "schema", "value", "onChange", "onInvalid"]);
     useEffect(() => {
         monaco.init().then(monaco => {
             if (typeof schema === 'object') {
@@ -27,6 +27,18 @@ function MonacoJsonEditor(_a) {
             }
         });
     }, []);
-    return (React.createElement(MonacoEditor, Object.assign({}, otherProps, { width: width, height: height, options: Object.assign(Object.assign({}, options), { minimap: Object.assign({ enabled: false }, options === null || options === void 0 ? void 0 : options.minimap) }), language: "json" })));
+    const handleChange = (ev, value) => {
+        let json;
+        try {
+            json = JSON.parse(value || '{}');
+            if (typeof onChange === 'function')
+                onChange(json, ev);
+        }
+        catch (error) {
+            if (typeof onInvalid === 'function')
+                onInvalid(value, ev);
+        }
+    };
+    return (React.createElement(ControlledEditor, Object.assign({}, otherProps, { width: width, height: height, value: JSON.stringify(value, null, 2), onChange: handleChange, options: Object.assign(Object.assign({}, options), { minimap: Object.assign({ enabled: false }, options === null || options === void 0 ? void 0 : options.minimap) }), language: "json" })));
 }
 export default MonacoJsonEditor;
