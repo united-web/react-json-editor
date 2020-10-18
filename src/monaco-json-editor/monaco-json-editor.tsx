@@ -3,7 +3,7 @@ import { ControlledEditor, ControlledEditorProps, monaco } from '@monaco-editor/
 import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema';
 
 export type MonacoJsonEditorProps = Omit<ControlledEditorProps, 'language' | 'value' | 'onChange'> & {
-    schema?: JSONSchema4 | JSONSchema6 | JSONSchema7;
+    schema?: JSONSchema4 | JSONSchema6 | JSONSchema7 | object;
     value?: any;
     onChange?: (value: any, ev: any) => any | void,
     onInvalid?: (value: any, ev: any) => any | void;
@@ -20,8 +20,8 @@ function MonacoJsonEditor({
     ...otherProps
 }: MonacoJsonEditorProps) {
     useEffect(() => {
-        monaco.init().then(monaco => {
-            if (typeof schema === 'object') {
+        if (typeof schema === 'object') {
+            monaco.init().then(monaco => {
                 monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
                     validate: true,
                     schemas: [{
@@ -30,14 +30,13 @@ function MonacoJsonEditor({
                         schema
                     }]
                 });
-            }
-        });
-    }, []);
+            });
+        }
+    }, [schema]);
 
     const handleChange: ControlledEditorProps['onChange'] = (ev, value) => {
-        let json;
         try {
-            json = JSON.parse(value || '{}');
+            const json = JSON.parse(value || '{}');
             if (typeof onChange === 'function') onChange(json, ev);
         } catch (error) {
             if (typeof onInvalid === 'function') onInvalid(value, ev);

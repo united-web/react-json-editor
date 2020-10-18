@@ -14,8 +14,8 @@ import { ControlledEditor, monaco } from '@monaco-editor/react';
 function MonacoJsonEditor(_a) {
     var { width = '100%', height = 180, options, schema, value, onChange, onInvalid } = _a, otherProps = __rest(_a, ["width", "height", "options", "schema", "value", "onChange", "onInvalid"]);
     useEffect(() => {
-        monaco.init().then(monaco => {
-            if (typeof schema === 'object') {
+        if (typeof schema === 'object') {
+            monaco.init().then(monaco => {
                 monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
                     validate: true,
                     schemas: [{
@@ -24,13 +24,12 @@ function MonacoJsonEditor(_a) {
                             schema
                         }]
                 });
-            }
-        });
-    }, []);
+            });
+        }
+    }, [schema]);
     const handleChange = (ev, value) => {
-        let json;
         try {
-            json = JSON.parse(value || '{}');
+            const json = JSON.parse(value || '{}');
             if (typeof onChange === 'function')
                 onChange(json, ev);
         }
