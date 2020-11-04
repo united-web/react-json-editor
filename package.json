@@ -1,6 +1,6 @@
 {
   "name": "@united-web/react-json-editor",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "main": "dist/monaco-json-editor.js",
   "dependencies": {
     "@monaco-editor/react": "^3.6.3",
@@ -38,10 +38,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "monaco-editor-webpack-plugin": "^2.0.0",
-    "react-app-rewired": "^2.1.6"
   },
   "bit": {
     "env": {

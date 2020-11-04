@@ -2,10 +2,8 @@ import React, {useEffect} from 'react';
 import { ControlledEditor, ControlledEditorProps, monaco } from '@monaco-editor/react';
 import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema';
 
-export type MonacoJsonEditorProps = Omit<ControlledEditorProps, 'language' | 'value' | 'onChange'> & {
+export type MonacoJsonEditorProps = Omit<ControlledEditorProps, 'language'> & {
     schema?: JSONSchema4 | JSONSchema6 | JSONSchema7 | object;
-    value?: any;
-    onChange?: (value: any, ev: any) => any | void,
     onInvalid?: (value: any, ev: any) => any | void;
 }
 
@@ -48,7 +46,7 @@ function MonacoJsonEditor({
             {...otherProps}
             width={width}
             height={height}
-            value={JSON.stringify(value, null, 2)}
+            value={value}
             onChange={handleChange}
             options={{
                 ...options,
