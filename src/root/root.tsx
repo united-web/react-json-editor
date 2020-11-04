@@ -7,7 +7,6 @@ function Root() {
         <MonacoJsonEditor
             schema={jsonSchema}
             onChange={console.log}
-            onInvalid={console.log}
         />
     );
 }

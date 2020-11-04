@@ -4,7 +4,6 @@ import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema';
 
 export type MonacoJsonEditorProps = Omit<ControlledEditorProps, 'language'> & {
     schema?: JSONSchema4 | JSONSchema6 | JSONSchema7 | object;
-    onInvalid?: (value: any, ev: any) => any | void;
 }
 
 function MonacoJsonEditor({
@@ -14,7 +13,6 @@ function MonacoJsonEditor({
     schema,
     value,
     onChange,
-    onInvalid,
     ...otherProps
 }: MonacoJsonEditorProps) {
     useEffect(() => {
@@ -32,22 +30,13 @@ function MonacoJsonEditor({
         }
     }, [schema]);
 
-    const handleChange: ControlledEditorProps['onChange'] = (ev, value) => {
-        try {
-            const json = JSON.parse(value || '{}');
-            if (typeof onChange === 'function') onChange(json, ev);
-        } catch (error) {
-            if (typeof onInvalid === 'function') onInvalid(value, ev);
-        }
-    }
-
     return (
         <ControlledEditor
             {...otherProps}
             width={width}
             height={height}
             value={value}
-            onChange={handleChange}
+            onChange={onChange}
             options={{
                 ...options,
                 minimap: {
