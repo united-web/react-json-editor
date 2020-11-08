@@ -11,9 +11,12 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 import React, { useEffect, useState } from 'react';
 import { ControlledEditor, monaco } from '@monaco-editor/react';
+import Ajv from 'ajv';
+const ajv = new Ajv();
 function MonacoJsonEditor(_a) {
-    var { width = '100%', height = 180, options, schema, initialValue, onChange, onError } = _a, otherProps = __rest(_a, ["width", "height", "options", "schema", "initialValue", "onChange", "onError"]);
-    const [value, setValue] = useState("");
+    var { width = '100%', height = 180, options, schema, initialValue, onChange, onSchemaValid, onSchemaInvalid, onError } = _a, otherProps = __rest(_a, ["width", "height", "options", "schema", "initialValue", "onChange", "onSchemaValid", "onSchemaInvalid", "onError"]);
+    const [value, setValue] = useState();
+    const [validate, setValidate] = useState();
     useEffect(() => {
         const json = JSON.stringify(initialValue, null, 2);
         setValue(json);
@@ -30,12 +33,23 @@ function MonacoJsonEditor(_a) {
                         }]
                 });
             });
+            if (onSchemaValid || onSchemaInvalid) {
+                const validate = ajv.compile(schema);
+                setValidate(() => validate);
+            }
         }
     }, [schema]);
     return (React.createElement(ControlledEditor, Object.assign({}, otherProps, { width: width, height: height, value: value, onChange: (ev, value) => {
             try {
                 const data = value && JSON.parse(value);
                 onChange === null || onChange === void 0 ? void 0 : onChange(data, ev);
+                if (validate) {
+                    const valid = validate(data);
+                    if (valid)
+                        onSchemaValid === null || onSchemaValid === void 0 ? void 0 : onSchemaValid(data, ev);
+                    else
+                        onSchemaInvalid === null || onSchemaInvalid === void 0 ? void 0 : onSchemaInvalid(data, ev);
+                }
             }
             catch (e) {
                 onError === null || onError === void 0 ? void 0 : onError(e, ev);

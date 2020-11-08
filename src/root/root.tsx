@@ -10,8 +10,7 @@ function Root() {
                 some: "name",
                 value: "value"
             }}
-            onChange={console.log}
-            onError={console.log}
+            onSchemaValid={console.log}
         />
     );
 }

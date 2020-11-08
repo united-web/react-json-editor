@@ -1,14 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import { ControlledEditor, ControlledEditorProps, monaco } from '@monaco-editor/react';
 import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema';
+import Ajv from 'ajv';
 
+export type OnChange = (value?: object, ev?: any) => void;
 export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7 | object;
 export type MonacoJsonEditorProps = Omit<ControlledEditorProps, 'language' | 'value' | 'onChange'> & {
     schema?: JSONSchema;
     initialValue?: object;
-    onChange?: (value: object, ev: any) => void;
+    onChange?: OnChange;
     onError?: (error: Error, ev: any) => void;
+    onSchemaValid?: OnChange;
+    onSchemaInvalid?: OnChange;
 }
+
+const ajv = new Ajv();
 
 function MonacoJsonEditor({
     width = '100%',
@@ -17,10 +23,13 @@ function MonacoJsonEditor({
     schema,
     initialValue,
     onChange,
+    onSchemaValid,
+    onSchemaInvalid,
     onError,
     ...otherProps
 }: MonacoJsonEditorProps) {
-    const [value, setValue] = useState<string | undefined>("");
+    const [value, setValue] = useState<string>();
+    const [validate, setValidate] = useState<Ajv.ValidateFunction>();
 
     useEffect(() => {
         const json = JSON.stringify(initialValue, null, 2);
@@ -39,6 +48,10 @@ function MonacoJsonEditor({
                     }]
                 });
             });
+            if (onSchemaValid || onSchemaInvalid) {
+                const validate = ajv.compile(schema);
+                setValidate(() => validate);
+            }
         }
     }, [schema]);
 
@@ -52,6 +65,12 @@ function MonacoJsonEditor({
                 try {
                     const data = value && JSON.parse(value);
                     onChange?.(data, ev);
+
+                    if (validate) {
+                        const valid = validate(data);
+                        if (valid) onSchemaValid?.(data, ev)
+                        else onSchemaInvalid?.(data, ev);
+                    }
                 } catch (e) {
                     onError?.(e, ev);
                 }
