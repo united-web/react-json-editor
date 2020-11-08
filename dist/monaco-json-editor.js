@@ -9,17 +9,22 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ControlledEditor, monaco } from '@monaco-editor/react';
 function MonacoJsonEditor(_a) {
-    var { width = '100%', height = 180, options, schema, value, onChange } = _a, otherProps = __rest(_a, ["width", "height", "options", "schema", "value", "onChange"]);
+    var { width = '100%', height = 180, options, schema, initialValue, onChange, onError } = _a, otherProps = __rest(_a, ["width", "height", "options", "schema", "initialValue", "onChange", "onError"]);
+    const [value, setValue] = useState("");
+    useEffect(() => {
+        const json = JSON.stringify(initialValue, null, 2);
+        setValue(json);
+    }, [initialValue]);
     useEffect(() => {
         if (typeof schema === 'object') {
             monaco.init().then(monaco => {
                 monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
                     validate: true,
                     schemas: [{
-                            uri: "http://json-schema-server/",
+                            uri: "https://json.schemastore.org/",
                             fileMatch: ['*'],
                             schema
                         }]
@@ -27,6 +32,14 @@ function MonacoJsonEditor(_a) {
             });
         }
     }, [schema]);
-    return (React.createElement(ControlledEditor, Object.assign({}, otherProps, { width: width, height: height, value: value, onChange: onChange, options: Object.assign(Object.assign({}, options), { minimap: Object.assign({ enabled: false }, options === null || options === void 0 ? void 0 : options.minimap) }), language: "json" })));
+    return (React.createElement(ControlledEditor, Object.assign({}, otherProps, { width: width, height: height, value: value, onChange: (ev, value) => {
+            try {
+                const data = value && JSON.parse(value);
+                onChange === null || onChange === void 0 ? void 0 : onChange(data, ev);
+            }
+            catch (e) {
+                onError === null || onError === void 0 ? void 0 : onError(e, ev);
+            }
+        }, options: Object.assign(Object.assign({}, options), { minimap: Object.assign({ enabled: false }, options === null || options === void 0 ? void 0 : options.minimap) }), language: "json" })));
 }
 export default MonacoJsonEditor;

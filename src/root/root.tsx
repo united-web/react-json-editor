@@ -6,7 +6,12 @@ function Root() {
     return (
         <MonacoJsonEditor
             schema={jsonSchema}
+            initialValue={{
+                some: "name",
+                value: "value"
+            }}
             onChange={console.log}
+            onError={console.log}
         />
     );
 }

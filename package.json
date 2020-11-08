@@ -1,6 +1,6 @@
 {
   "name": "@united-web/react-json-editor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "dist/monaco-json-editor.js",
   "dependencies": {
     "@monaco-editor/react": "^3.6.3",
